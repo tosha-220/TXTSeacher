@@ -13,7 +13,6 @@ public class Writer {
 
         try (FileWriter fileWriter = new FileWriter(path + "text.txt")) {
             if (allLines.length() > 0) {
-                System.out.println(allLines);
                 fileWriter.write(allLines);
             }
             fileWriter.flush();
