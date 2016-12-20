@@ -1,33 +1,35 @@
 package ru.cma;
 
+import org.apache.log4j.Logger;
+import ru.cma.impl.TxtReader;
+import ru.cma.impl.TxtSearcher;
+import ru.cma.impl.Writer;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
 public class Main {
 
+    private static final Logger log = Logger.getLogger(Main.class);
+
     public static void main(String[] args) {
-        Searcher txtFinder = new Searcher();
-        Reader readerFromTXT = new Reader();
-        File file = txtFinder.pathToFolder(args[0]);
+
         List<File> filesList = null;
         try {
-            filesList = txtFinder.findAllTXT(file);
+            TxtSearcher txtFinder = new TxtSearcher();
+            File file = txtFinder.pathToFolder(args[0]);
+
+            filesList = txtFinder.findAllFiles(file);
             if (filesList.size() == 0) {
-                throw new FileNotFoundException();
+                throw new FileNotFoundException("FilesList is empty");
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Files .txt not found in this folder");
+            log.error("Files .txt not found in this folder");
             System.exit(0);
         }
-        for (File txt : filesList) {
-            readerFromTXT.reading(txt);
-        }
-        List<String> textList = readerFromTXT.getList();
-        if(textList.size()==0){
-            System.out.println(filesList.size()+" files where found but they were empty");
-        }
+        TxtReader txtReader = new TxtReader();
         Writer writerToTXT = new Writer();
-        writerToTXT.writingToTXT(textList, args[1]);
+        writerToTXT.writingToTXT(txtReader.read(filesList), args[1]);
     }
 }
